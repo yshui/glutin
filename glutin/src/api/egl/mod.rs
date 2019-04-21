@@ -1044,6 +1044,13 @@ unsafe fn choose_fbconfig(
             out.push(alpha as raw::c_int);
         }
 
+        if reqs.color_bits.is_some() && reqs.alpha_bits.is_some() {
+            let buffer_size = reqs.color_bits.unwrap() + reqs.alpha_bits.unwrap();
+	    eprintln!("EGL Buffer size: {}", buffer_size);
+            out.push(ffi::egl::BUFFER_SIZE as raw::c_int);
+            out.push(buffer_size as raw::c_int);
+        }
+
         if let Some(depth) = reqs.depth_bits {
             out.push(ffi::egl::DEPTH_SIZE as raw::c_int);
             out.push(depth as raw::c_int);

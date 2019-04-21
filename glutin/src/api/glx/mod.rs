@@ -682,6 +682,13 @@ unsafe fn choose_fbconfig(
             out.push(alpha as raw::c_int);
         }
 
+        if reqs.color_bits.is_some() && reqs.alpha_bits.is_some() {
+            let buffer_size = reqs.color_bits.unwrap() + reqs.alpha_bits.unwrap();
+	    eprintln!("GLX Buffer size: {}", buffer_size);
+            out.push(ffi::glx::BUFFER_SIZE as raw::c_int);
+            out.push(buffer_size as raw::c_int);
+        }
+
         if let Some(depth) = reqs.depth_bits {
             out.push(ffi::glx::DEPTH_SIZE as raw::c_int);
             out.push(depth as raw::c_int);
@@ -783,6 +790,7 @@ unsafe fn choose_fbconfig(
         value
     };
 
+    eprintln!("Result: {}", get_attrib(ffi::glx::BUFFER_SIZE as raw::c_int) as u8);
     let pf_desc = PixelFormat {
         hardware_accelerated: get_attrib(ffi::glx::CONFIG_CAVEAT as raw::c_int)
             != ffi::glx::SLOW_CONFIG as raw::c_int,
